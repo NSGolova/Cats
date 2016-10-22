@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="125.0" prefWidth="197.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/8.0.112-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <children>
+      <Button layoutX="-30.0" layoutY="-5.0" mnemonicParsing="false" onAction="#cat" prefHeight="135.0" prefWidth="256.0" style="-fx-background-color: rgba(0,0,0,0);;" textFill="#1eff00">
+         <graphic>
+            <ImageView accessibleRole="BUTTON" fitHeight="125.0" fitWidth="427.0" onMouseClicked="#cat" onMousePressed="#cat" pickOnBounds="true" preserveRatio="true" smooth="false">
+               <image>
+                  <Image url="@../cat.jpg" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+         </graphic>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></Button>
+      <Button layoutX="76.0" layoutY="-5.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="56.0" style="-fx-background-color: rgba(0,0,0,0);;" text="NSFW" textFill="RED" visible="false" />
+      <Label layoutY="-23.0" prefHeight="73.0" prefWidth="127.0" text="More cats!" textFill="#9a6a6a">
+         <font>
+            <Font size="25.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="CLOSED_HAND" />
+         </cursor></Label>
+   </children>
+</Pane>
