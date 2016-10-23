@@ -1,5 +1,6 @@
 package sample;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -15,6 +16,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,35 +88,53 @@ public class Controller
 
     public void show(String url)
     {
-        Stage stage = new Stage();
-        stage.initStyle(StageStyle.UNDECORATED);
-        Pane pane = new Pane();
-        final Delta dragDelta = new Delta();
-        pane.setOnMousePressed(mouseEvent -> {
-            dragDelta.x = stage.getX() - mouseEvent.getScreenX();
-            dragDelta.y = stage.getY() - mouseEvent.getScreenY();
-        });
-        pane.setOnMouseDragged(mouseEvent -> {
-            stage.setX(mouseEvent.getScreenX() + dragDelta.x);
-            stage.setY(mouseEvent.getScreenY() + dragDelta.y);
-        });
-        ImageView catView = new ImageView(url);
-        pane.getChildren().add(catView);
+        Task<Image> imageDisplayTask = new Task<Image>() {
+            @Override
+            public Image call() throws InterruptedException {
+                return new Image(url);
+            }
+        };
 
-        ImageView close = new ImageView("closeDark.png");
-        close.setPreserveRatio(true);
-        close.setSmooth(true);
-        close.setFitWidth(30);
-        close.setFitHeight(30);
-        close.setLayoutX(3);
-        close.setLayoutY(3);
-        close.setOnMousePressed(event -> stage.close());
-        close.setOnMouseEntered(event -> close.setImage(new Image("close.png")));
-        close.setOnMouseExited(event -> close.setImage(new Image("closeDark.png")));
-        pane.getChildren().add(close);
+        imageDisplayTask.setOnSucceeded(e -> {
+            Stage stage = new Stage();
+            stage.initStyle(StageStyle.UNDECORATED);
+            Pane pane = new Pane();
+            final Delta dragDelta = new Delta();
+            pane.setOnMousePressed(mouseEvent -> {
+                dragDelta.x = stage.getX() - mouseEvent.getScreenX();
+                dragDelta.y = stage.getY() - mouseEvent.getScreenY();
+            });
+            pane.setOnMouseDragged(mouseEvent -> {
+                stage.setX(mouseEvent.getScreenX() + dragDelta.x);
+                stage.setY(mouseEvent.getScreenY() + dragDelta.y);
+            });
+            ImageView catView = new ImageView(imageDisplayTask.getValue());
+            pane.getChildren().add(catView);
 
-        stage.setScene(new Scene(pane));
-        stage.show();
+            ImageView close = new ImageView("closeDark.png");
+            close.setPreserveRatio(true);
+            close.setSmooth(true);
+            close.setFitWidth(30);
+            close.setFitHeight(30);
+            close.setLayoutX(3);
+            close.setLayoutY(3);
+            close.setOnMousePressed(event -> stage.close());
+            close.setOnMouseEntered(event -> close.setImage(new Image("close.png")));
+            close.setOnMouseExited(event -> close.setImage(new Image("closeDark.png")));
+            pane.getChildren().add(close);
+
+            stage.setScene(new Scene(pane));
+            stage.show();
+        });
+
+        Executor exec = Executors.newCachedThreadPool(runnable -> {
+            Thread t = new Thread(runnable);
+            t.setDaemon(true);
+            return t ;
+        });
+
+        exec.execute(imageDisplayTask);
+
     }
 }
 
